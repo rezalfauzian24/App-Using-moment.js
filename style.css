@@ -1,0 +1,105 @@
+/* Font bergaya gaming retro */
+body {
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    /* Warna latar belakang hitam */
+    background-color: #111; 
+    color: white; 
+    line-height: 1.5;
+}
+
+.kalkulator-usia {
+    background-color: #222; /* Kontainer hitam sedikit lebih terang */
+    padding: 40px 30px;
+    border-radius: 5px;
+    /* Efek outline kuning neon */
+    box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, inset 0 0 5px #FFD700;
+    text-align: center;
+    width: 350px;
+    border: 3px solid #FFD700;
+}
+
+h1 {
+    color: #FFD700; /* Kuning Neon */
+    margin-bottom: 30px;
+    font-size: 1.3em;
+    text-shadow: 2px 2px #000;
+}
+
+label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 0.8em;
+    color: white;
+}
+
+input[type="date"] {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 30px;
+    border: 2px solid #FFD700;
+    border-radius: 3px;
+    background-color: #000;
+    color: #FFD700;
+    font-family: Arial, sans-serif; /* Agar input tanggal lebih mudah dibaca */
+    font-size: 16px;
+}
+
+/* Style untuk tombol */
+button {
+    background-color: #FFD700; /* Kuning Neon */
+    color: black; 
+    border: 2px solid #000;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1em;
+    font-family: 'Press Start 2P', cursive;
+    box-shadow: 3px 3px 0 #000; /* Efek 3D / tombol */
+    transition: all 0.1s;
+}
+
+button:active {
+    box-shadow: none; /* Hilangkan bayangan saat ditekan */
+    transform: translate(3px, 3px);
+}
+
+/* Area Hasil */
+.hasil-box {
+    margin-top: 30px;
+    padding: 20px 10px;
+    background-color: #111;
+    border: 1px solid white;
+    font-size: 0.8em;
+    color: white;
+}
+
+.status-title {
+    color: #FFD700;
+    text-decoration: underline;
+    margin-bottom: 15px;
+}
+
+.detail-usia {
+    display: flex;
+    justify-content: space-around;
+    margin: 15px 0;
+}
+
+.detail-usia span {
+    display: block;
+    color: white;
+    padding: 5px;
+    border: 1px dashed #FFD700;
+    background-color: #333;
+}
+
+.total-hari {
+    color: #FFF;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
