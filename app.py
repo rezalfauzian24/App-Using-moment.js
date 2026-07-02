@@ -52,20 +52,33 @@ for col in ["Gender", "Married", "Dependents", "Education", "Self_Employed", "Pr
     df[col] = df[col].astype(str).str.strip()
     df.loc[df[col].isin(["nan", "None", ""]), col] = pd.NA
 
-# Coerce numeric columns in case they were read as text
+# Coerce numeric columns in case they were read as text (strip commas, currency
+# symbols, and stray whitespace first, e.g. "5,849" or "Rp 5849" -> "5849")
 for col in ["ApplicantIncome", "CoapplicantIncome", "LoanAmount", "Loan_Amount_Term", "Credit_History"]:
-    df[col] = pd.to_numeric(df[col], errors="coerce")
+    cleaned = df[col].astype(str).str.replace(r"[^\d.\-]", "", regex=True)
+    cleaned = cleaned.replace("", pd.NA)
+    df[col] = pd.to_numeric(cleaned, errors="coerce")
 
 df["Gender"] = df["Gender"].fillna(df["Gender"].mode()[0])
 df["Married"] = df["Married"].fillna(df["Married"].mode()[0])
 df["Dependents"] = df["Dependents"].fillna(df["Dependents"].mode()[0])
 df["Self_Employed"] = df["Self_Employed"].fillna(df["Self_Employed"].mode()[0])
-df["LoanAmount"] = df["LoanAmount"].fillna(df["LoanAmount"].median())
-df["Loan_Amount_Term"] = df["Loan_Amount_Term"].fillna(df["Loan_Amount_Term"].median())
-df["Credit_History"] = df["Credit_History"].fillna(df["Credit_History"].mode()[0])
+
+# Fill ALL numeric columns' missing values with median as a safety net
+# (not just LoanAmount/Loan_Amount_Term/Credit_History), in case the uploaded
+# CSV has missing/malformed values in columns the original dataset didn't.
+numeric_cols = ["ApplicantIncome", "CoapplicantIncome", "LoanAmount", "Loan_Amount_Term", "Credit_History"]
+for col in numeric_cols:
+    if df[col].isnull().any():
+        df[col] = df[col].fillna(df[col].median())
 
 st.subheader("Missing Values After Cleaning")
 st.write(df.isnull().sum())
+
+with st.expander("Data diagnostics (per-column NaN count right before encoding)"):
+    st.write(df.isnull().sum())
+    st.write("Sample of numeric columns after cleaning:")
+    st.dataframe(df[numeric_cols].head())
 
 # ---------------- STEP: Brief EDA ----------------
 st.subheader("Exploratory Data Analysis")
@@ -105,19 +118,26 @@ for col in model_df.columns:
         model_df[col] = le.fit_transform(model_df[col])
         encoders[col] = le
 
-# Safety net: drop any rows that are still non-numeric/NaN after cleaning + encoding
+# Safety net: catch any leftover NaN/non-numeric values after cleaning + encoding
 model_df = model_df.apply(pd.to_numeric, errors="coerce")
+nan_counts = model_df.isnull().sum()
+if nan_counts.sum() > 0:
+    st.warning("Some columns still contain invalid values after cleaning:")
+    st.write(nan_counts[nan_counts > 0])
+
 n_before = len(model_df)
 model_df = model_df.dropna()
 n_after = len(model_df)
 if n_after < n_before:
-    st.warning(
-        f"Dropped {n_before - n_after} row(s) that still contained invalid/missing "
-        "values after cleaning (this can happen if the CSV has unexpected values)."
-    )
+    st.info(f"Dropped {n_before - n_after} row(s) with remaining invalid values.")
 
 if model_df.empty:
-    st.error("No usable rows remain after cleaning. Please check your CSV file.")
+    st.error(
+        "No usable rows remain after cleaning. Check the 'Some columns still "
+        "contain invalid values' warning above to see which column is entirely "
+        "empty/invalid — that's almost certainly a formatting issue in your CSV "
+        "for that column."
+    )
     st.stop()
 
 X = model_df.drop(columns=["Loan_Status"])
