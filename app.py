@@ -24,10 +24,38 @@ if uploaded_file is None:
 
 df = load_data(uploaded_file)
 
+# Normalize column names in case of stray whitespace from the CSV
+df.columns = df.columns.str.strip()
+
+required_cols = [
+    "Gender", "Married", "Dependents", "Education", "Self_Employed",
+    "ApplicantIncome", "CoapplicantIncome", "LoanAmount",
+    "Loan_Amount_Term", "Credit_History", "Property_Area", "Loan_Status",
+]
+missing_cols = [c for c in required_cols if c not in df.columns]
+if missing_cols:
+    st.error(
+        "The uploaded CSV is missing these expected columns: "
+        f"{missing_cols}. Found columns: {list(df.columns)}"
+    )
+    st.stop()
+
 st.subheader("Raw Data")
 st.dataframe(df.head())
 
+with st.expander("Data diagnostics (dtypes)"):
+    st.write(df.dtypes)
+
 # ---------------- STEP: Data Cleaning ----------------
+# Strip whitespace from text columns to avoid duplicate/near-duplicate categories
+for col in ["Gender", "Married", "Dependents", "Education", "Self_Employed", "Property_Area", "Loan_Status"]:
+    df[col] = df[col].astype(str).str.strip()
+    df.loc[df[col].isin(["nan", "None", ""]), col] = pd.NA
+
+# Coerce numeric columns in case they were read as text
+for col in ["ApplicantIncome", "CoapplicantIncome", "LoanAmount", "Loan_Amount_Term", "Credit_History"]:
+    df[col] = pd.to_numeric(df[col], errors="coerce")
+
 df["Gender"] = df["Gender"].fillna(df["Gender"].mode()[0])
 df["Married"] = df["Married"].fillna(df["Married"].mode()[0])
 df["Dependents"] = df["Dependents"].fillna(df["Dependents"].mode()[0])
@@ -71,10 +99,26 @@ model_df = df.drop(columns=["Loan_ID"], errors="ignore").copy()
 
 encoders = {}
 for col in model_df.columns:
-    if model_df[col].dtype == "object":
+    if model_df[col].dtype == "object" or str(model_df[col].dtype).startswith("string"):
+        model_df[col] = model_df[col].astype(str)
         le = LabelEncoder()
         model_df[col] = le.fit_transform(model_df[col])
         encoders[col] = le
+
+# Safety net: drop any rows that are still non-numeric/NaN after cleaning + encoding
+model_df = model_df.apply(pd.to_numeric, errors="coerce")
+n_before = len(model_df)
+model_df = model_df.dropna()
+n_after = len(model_df)
+if n_after < n_before:
+    st.warning(
+        f"Dropped {n_before - n_after} row(s) that still contained invalid/missing "
+        "values after cleaning (this can happen if the CSV has unexpected values)."
+    )
+
+if model_df.empty:
+    st.error("No usable rows remain after cleaning. Please check your CSV file.")
+    st.stop()
 
 X = model_df.drop(columns=["Loan_Status"])
 y = model_df["Loan_Status"]
@@ -85,7 +129,15 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # ---------------- STEP: Train Random Forest ----------------
 rf = RandomForestClassifier(n_estimators=100, random_state=42)
-rf.fit(X_train, y_train)
+try:
+    rf.fit(X_train, y_train)
+except ValueError as e:
+    st.error(f"Model training failed: {e}")
+    with st.expander("Debug info"):
+        st.write("X_train dtypes:", X_train.dtypes)
+        st.write("X_train NaN counts:", X_train.isnull().sum())
+        st.write("y_train unique values:", y_train.unique())
+    st.stop()
 y_pred = rf.predict(X_test)
 
 # ---------------- STEP: Evaluation ----------------
