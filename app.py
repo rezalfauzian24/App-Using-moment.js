@@ -392,7 +392,7 @@
         "id": "ls24QcEAoBXY",
         "outputId": "4170880d-cd27-4514-ca8e-128749ae9a0b"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "execute_result",
@@ -428,7 +428,7 @@
         "id": "frq71jKVoaID",
         "outputId": "fb6aeae1-3466-462b-9073-838f9e2397e0"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "execute_result",
@@ -561,7 +561,7 @@
         "id": "_JDns7c5ozVD",
         "outputId": "72a7a51a-1c60-48fe-fa1b-407a1eb63b87"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "stream",
@@ -630,7 +630,7 @@
         "id": "niZxe7EppFRp",
         "outputId": "5db67da2-bbcf-47a2-cb19-9fab4bb58d0f"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "stream",
@@ -685,7 +685,7 @@
         "id": "cmTOJTZApQ2r",
         "outputId": "2ba23fbe-ea76-4406-883d-65efd5e80ff4"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "execute_result",
@@ -825,7 +825,7 @@
         "id": "JkiyiyeJqPI5",
         "outputId": "828c97cb-cf1c-44cc-9a32-6dc61aae5eb1"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "display_data",
@@ -869,7 +869,7 @@
         "id": "C_XnuEk0rOrS",
         "outputId": "bd092710-a539-4997-98a4-04ff34bc4390"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "display_data",
@@ -913,7 +913,7 @@
         "id": "xDUTAY84sdxa",
         "outputId": "4ccf3f79-2423-4553-ec04-261826b6d7ab"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "display_data",
@@ -959,7 +959,7 @@
         "id": "ruiYJRxLtEbH",
         "outputId": "2b9f10f2-aa23-4d18-a19b-c54f480afde1"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": [
         {
           "output_type": "display_data",
@@ -992,7 +992,7 @@
       "metadata": {
         "id": "esS57wy016m9"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": []
     },
     {
@@ -1038,7 +1038,7 @@
       "metadata": {
         "id": "w8mkyfe63h4e"
       },
-      "execution_count": null,
+      "execution_count": None,
       "outputs": []
     },
     {
