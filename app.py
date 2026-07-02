@@ -5,7 +5,7 @@
     "colab": {
       "provenance": [],
       "name": "app.py",
-      "include_colab_link": true
+      "include_colab_link": True
     },
     "kernelspec": {
       "name": "python3",
